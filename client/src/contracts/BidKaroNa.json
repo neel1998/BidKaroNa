@@ -1,0 +1,110 @@
+{
+  "contractName": "BidKaroNa",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/vaibhav/Acads/PoIS/Project/BidKaroNa/contracts/BidKaroNa.sol\":\"BidKaroNa\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/vaibhav/Acads/PoIS/Project/BidKaroNa/contracts/BidKaroNa.sol\":{\"keccak256\":\"0xff9306c4fe4e729e831a61d7fb6066f6431fdfc430152ce14e756bd0bc1fdf3e\",\"urls\":[\"bzz-raw://d82e178c9b492e99b4ec5c70c0960a75cf9313ef619bf3162141a366ee9b98e5\",\"dweb:/ipfs/QmNwmxSUSmtEYr2qDmssNoBV8L3ymNF65BQoX8rNm3GGJc\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a72315820ab617d3e2e1d006f19c369be39e12812e2ec278bd5d6f312efda755b73eee3e264736f6c63430005100032",
+  "deployedBytecode": "0x6080604052600080fdfea265627a7a72315820ab617d3e2e1d006f19c369be39e12812e2ec278bd5d6f312efda755b73eee3e264736f6c63430005100032",
+  "sourceMap": "238:79:1:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;238:79:1;;;;;;;",
+  "deployedSourceMap": "238:79:1:-;;;;;",
+  "source": "/* \nAuthors: vaibhav.garg:anchit.gupta:preet.thakkar\nDate: 8th October\n\nThe main contract containing all the business logic\nfor the application, also provides the necessary \nmethods for the front-end\n*/\n\npragma solidity >=0.4.21 <0.7.0;\n\ncontract BidKaroNa {\n  \n  // State variables\n\n  // Modifiers\n\n  // Methods\n  \n}\n",
+  "sourcePath": "/home/vaibhav/Acads/PoIS/Project/BidKaroNa/contracts/BidKaroNa.sol",
+  "ast": {
+    "absolutePath": "/home/vaibhav/Acads/PoIS/Project/BidKaroNa/contracts/BidKaroNa.sol",
+    "exportedSymbols": {
+      "BidKaroNa": [
+        59
+      ]
+    },
+    "id": 60,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 58,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".21",
+          "<",
+          "0.7",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "204:32:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 59,
+        "linearizedBaseContracts": [
+          59
+        ],
+        "name": "BidKaroNa",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 60,
+        "src": "238:79:1"
+      }
+    ],
+    "src": "204:114:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/vaibhav/Acads/PoIS/Project/BidKaroNa/contracts/BidKaroNa.sol",
+    "exportedSymbols": {
+      "BidKaroNa": [
+        59
+      ]
+    },
+    "id": 60,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 58,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".21",
+          "<",
+          "0.7",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "204:32:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 59,
+        "linearizedBaseContracts": [
+          59
+        ],
+        "name": "BidKaroNa",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 60,
+        "src": "238:79:1"
+      }
+    ],
+    "src": "204:114:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.2.5",
+  "updatedAt": "2020-10-08T07:41:26.311Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
