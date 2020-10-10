@@ -95,25 +95,62 @@ contract BidKaroNa {
   }
 
   function activateAuction(int auctionId) public onlySeller(auctionId) returns (bool) {
-    if (!partyOwnsAsset(this, a.assetAddress)) revert();
     Auction a = auctions[auctionId];
+    if (!partyOwnsAsset(this, a.assetAddress)) revert();
     a.status = AuctionStatus.Active;
     return true;
   }
 
   function cancelAuction(int auctionId) public onlySeller(auctionId) returns (bool) {
+    Auction a = auctions[auctionId];
+    if (!partyOwnsAsset(this, a.assetAddress)) revert();
+
+
+    if (a.status == AuctionStatus.Inactive) {
+      LogFailure("Cannot cancel an inactive auction"); // OR CAN IT BE CANCELLED ?
+    }
+
+    // TIME CONSTRAINT
+    // START TIME BHI HONA CHAHIYE I GUESS TO CHECK
+
+    if (a.bids.length > 0) {
+      LogFailure("Cannot cancel the auction, there are valid bids placed");
+    }
+    a.status = AuctionStatus.Inactive;
+    return true;
 
   }
 
   function getRefund() public returns (bool) {
     uint256 refund = refunds[msg.sender];
     refunds[msg.sender] = 0;
-    if (!msg.sender.send(refund))
+    if (!msg.sender.send(refund)){
       refunds[msg.sender] = refund;
+      return false;
+    }
+
+    return true;
   }
 
   function placeBid(int auctionId) public returns (bool) {
+    Auction a = auction[auctionId];
+    if (!partyOwnsAsset(this, a.assetAddress)) revert();
+    
+    // inactive auction
+    if (a.status == AuctionStatus.Inactive) {
+      LogFailure("Auction not active yet");
+    }
 
+    // bid should be greater than reserve price
+    if (msg.value < a.reservePrice) {
+      LogFailure("Amount less than reserve price");
+    }
+
+    a.bids.bidder = msg.sender;
+    a.bids.amount = msg.value;
+    a.bids.timeStamp = block.number;
+
+    return true;
   }
 
 }
