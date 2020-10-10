@@ -2,7 +2,7 @@
 
 Blockchain based Auction system
 
-### Team Memebers
+### Team Members
 
 - Preet Thakkar
 - Vaibhav Garg
