@@ -70,7 +70,7 @@ contract BidKaroNa {
     }
     
     // Check if given deadline is in the future
-    if (block.number >= _deadline) {
+    if (block.timestamp >= _deadline) {
       emit LogFailure("LOG: Invalid deadline.");
       revert();
     }
@@ -101,7 +101,7 @@ contract BidKaroNa {
 
   function activateAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
     
-    if(block.number >= auctions[auctionId].deadline) {
+    if(block.timestamp >= auctions[auctionId].deadline) {
       emit LogFailure("LOG: The deadline for auction has already passed."); 
       return false;
     }
@@ -123,7 +123,7 @@ contract BidKaroNa {
   function endAuction(uint256 auctionId) public returns (bool) {
 
     // The deadline should be gone
-    if (block.number < auctions[auctionId].deadline) {
+    if (block.timestamp < auctions[auctionId].deadline) {
       emit LogFailure("LOG: Cannot end auction before the deadline."); 
       return false;
     }
@@ -168,7 +168,7 @@ contract BidKaroNa {
       return false;
     }
 
-    if (block.number >= auctions[auctionId].deadline) {
+    if (block.timestamp >= auctions[auctionId].deadline) {
       emit LogFailure("LOG: Cannot cancel an auction after the deadline."); 
       return false;
     }
@@ -220,7 +220,7 @@ contract BidKaroNa {
     uint256 bidId = auctions[auctionId].bids.length++;
     auctions[auctionId].bids[bidId].bidder = msg.sender;
     auctions[auctionId].bids[bidId].amount = msg.value;
-    auctions[auctionId].bids[bidId].timeStamp = block.number;
+    auctions[auctionId].bids[bidId].timeStamp = block.timestamp;
 
     auctions[auctionId].refunds[msg.sender] += msg.value;
 
