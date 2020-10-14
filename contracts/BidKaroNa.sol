@@ -52,7 +52,7 @@ contract BidKaroNa {
     owner = _owner;
   }
 
-  function partyOwnsAsset(address _party, address _assetAddress) public returns (bool) {
+  function partyOwnsAsset(address _party, address _assetAddress) public view returns (bool) {
     Asset assetContract = Asset(_assetAddress);
     return assetContract.getOwner() == _party;
   }
@@ -87,7 +87,7 @@ contract BidKaroNa {
       revert();
     }
 
-    // Createing the auction in Inactive State
+    // Creating the auction in Inactive State
     uint256 auctionId = auctions.length++;
     auctions[auctionId].reservePrice = _reservePrice;
     auctions[auctionId].seller = msg.sender;
@@ -95,6 +95,7 @@ contract BidKaroNa {
     auctions[auctionId].deadline = _deadline;
     auctions[auctionId].title = _title;
     auctions[auctionId].status = AuctionStatus.Inactive;
+    activeAssets[_assetAddress] = true;
 
     return auctionId;
   }
@@ -109,7 +110,7 @@ contract BidKaroNa {
     if (!partyOwnsAsset(address(this), auctions[auctionId].assetAddress)){
       emit LogFailure("LOG: Transfer ownership to BidKaroNa before activating the auction."); 
       return false;
-    } 
+    }
 
     if(auctions[auctionId].status == AuctionStatus.Active) {
       emit LogFailure("LOG: The auction is already active."); 
@@ -150,6 +151,9 @@ contract BidKaroNa {
           bidIdx = i;
         }
       }
+
+      // Marking the asset on auction as inactive
+      activeAssets[auctions[auctionId].assetAddress] = false;
 
       // Transferring the ownership to the highest bidder
       assetContract.setOwner(auctions[auctionId].bids[bidIdx].bidder);
