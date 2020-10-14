@@ -7,7 +7,7 @@ for the application, also provides the necessary
 methods for the front-end
 */
 
-pragma solidity >=0.4.21 <0.7.0;
+pragma solidity 0.5.16;
 
 import "./Asset.sol";
 
@@ -44,10 +44,12 @@ contract BidKaroNa {
     _;
   }
 
+  // Events
+  event LogFailure(string log);
+
   // Methods
-  constructor(address _owner) public returns (bool) {
+  constructor(address _owner) public {
     owner = _owner;
-    return true;
   }
 
   function partyOwnsAsset(address _party, address _assetAddress) public returns (bool) {
@@ -63,127 +65,120 @@ contract BidKaroNa {
     
     // Check if the seller owns the asset
     if (!partyOwnsAsset(msg.sender, _assetAddress)) {
-      LogFailure("LOG: Seller does not own this asset.");
+      emit LogFailure("LOG: Seller does not own this asset.");
       revert();
     }
     
     // Check if given deadline is in the future
     if (block.number >= _deadline) {
-      LogFailure("LOG: Invalid deadline.");
+      emit LogFailure("LOG: Invalid deadline.");
       revert();
     }
 
     // Check if reserve price is valid
     if (_reservePrice <= 0) {
-      LogFailure("LOG: Reserve price should be above 0.");
+      emit LogFailure("LOG: Reserve price should be above 0.");
       revert();
     }
 
     // Check if asset is not already on auction
     if (activeAssets[_assetAddress]) {
-      LogFailure("LOG: Item is already on auction.");
+      emit LogFailure("LOG: Item is already on auction.");
       revert();
     }
 
     // Createing the auction in Inactive State
     uint256 auctionId = auctions.length++;
-    Auction a = auctions[auctionId];
-    a.reservePrice = _reservePrice;
-    a.seller = msg.sender;
-    a.assetAddress = _assetAddress;
-    a.deadline = _deadline;
-    a.title = _title;
-    a.status = AuctionStatus.Inactive;
+    auctions[auctionId].reservePrice = _reservePrice;
+    auctions[auctionId].seller = msg.sender;
+    auctions[auctionId].assetAddress = _assetAddress;
+    auctions[auctionId].deadline = _deadline;
+    auctions[auctionId].title = _title;
+    auctions[auctionId].status = AuctionStatus.Inactive;
 
     return auctionId;
   }
 
-  function activateAuction(int auctionId) public onlySeller(auctionId) returns (bool) {
+  function activateAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
     
-    Auction a = auctions[auctionId];
-    
-    if(block.number >= a.deadline) {
-      LogFailure("LOG: The deadline for auction has already passed."); 
+    if(block.number >= auctions[auctionId].deadline) {
+      emit LogFailure("LOG: The deadline for auction has already passed."); 
       return false;
     }
     
-    if (!partyOwnsAsset(this, a.assetAddress)){
-      LogFailure("LOG: Transfer ownership to BidKaroNa before activating the auction."); 
+    if (!partyOwnsAsset(address(this), auctions[auctionId].assetAddress)){
+      emit LogFailure("LOG: Transfer ownership to BidKaroNa before activating the auction."); 
       return false;
     } 
 
-    if(a.status == AuctionStatus.Active) {
-      LogFailure("LOG: The auction is already active."); 
+    if(auctions[auctionId].status == AuctionStatus.Active) {
+      emit LogFailure("LOG: The auction is already active."); 
       return false;
     }
     
-    a.status = AuctionStatus.Active;
+    auctions[auctionId].status = AuctionStatus.Active;
     return true;
   }
 
-  function endAuction(int auctionId) public returns (bool) {
-
-    Auction a = auctions[auctionId];
+  function endAuction(uint256 auctionId) public returns (bool) {
 
     // The deadline should be gone
-    if (block.number < a.deadline) {
-      LogFailure("LOG: Cannot end auction before the deadline."); 
+    if (block.number < auctions[auctionId].deadline) {
+      emit LogFailure("LOG: Cannot end auction before the deadline."); 
       return false;
     }
 
     // Auction needs to be active, so that it is ended only once
-    if (a.status == AuctionStatus.Inactive) {
-      LogFailure("LOG: Cannot end an already ended/cancelled auction."); 
+    if (auctions[auctionId].status == AuctionStatus.Inactive) {
+      emit LogFailure("LOG: Cannot end an already ended/cancelled auction."); 
       return false;
     }
 
-    a.status = AuctionStatus.Inactive;
-    Asset assetContract = Asset(a.assetAddress);
+    auctions[auctionId].status = AuctionStatus.Inactive;
+    Asset assetContract = Asset(auctions[auctionId].assetAddress);
 
     // no valid bidds were placed
-    if(a.bids.length == 0) {
+    if(auctions[auctionId].bids.length == 0) {
       // Tranferring ownership of asset back to the seller
-      assetContract.setOwner(a.seller);
+      assetContract.setOwner(auctions[auctionId].seller);
     }
     else{
       // Finding index corresponding to the highest bid
       uint256 bidIdx = 0;
-      for(uint256 i=1; i<a.bids.length; i++) {
-        if(a.bids[i].amount > a.bids[bidIdx].amount) {
+      for(uint256 i=1; i<auctions[auctionId].bids.length; i++) {
+        if(auctions[auctionId].bids[i].amount > auctions[auctionId].bids[bidIdx].amount) {
           bidIdx = i;
         }
       }
 
       // Transferring the ownership to the highest bidder
-      assetContract.setOwner(a.bids[bidIdx].bidder);
+      assetContract.setOwner(auctions[auctionId].bids[bidIdx].bidder);
 
       // Transferring the highest bid amount to the seller
-      a.refunds[a.bids[bidIdx].bidder] -= a.bids[bidIdx].amount;
-      a.refunds[a.seller] += a.bids[bidIdx].amount;
+      auctions[auctionId].refunds[auctions[auctionId].bids[bidIdx].bidder] -= auctions[auctionId].bids[bidIdx].amount;
+      auctions[auctionId].refunds[auctions[auctionId].seller] += auctions[auctionId].bids[bidIdx].amount;
     }
     return true;  
   }
 
-  function cancelAuction(int auctionId) public onlySeller(auctionId) returns (bool) {
-    
-    Auction a = auctions[auctionId];
+  function cancelAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
 
-    if (a.status == AuctionStatus.Inactive) {
-      LogFailure("LOG: Cannot cancel an inactive auction."); 
+    if (auctions[auctionId].status == AuctionStatus.Inactive) {
+      emit LogFailure("LOG: Cannot cancel an inactive auction."); 
       return false;
     }
 
-    if (block.number >= a.deadline) {
-      LogFailure("LOG: Cannot cancel an auction after the deadline."); 
+    if (block.number >= auctions[auctionId].deadline) {
+      emit LogFailure("LOG: Cannot cancel an auction after the deadline."); 
       return false;
     }
 
-    if (a.bids.length > 0) {
-      LogFailure("LOG: Cannot cancel the auction, there are valid bids placed");
+    if (auctions[auctionId].bids.length > 0) {
+      emit LogFailure("LOG: Cannot cancel the auction, there are valid bids placed");
       return false;
     }
 
-    a.status = AuctionStatus.Inactive;
+    auctions[auctionId].status = AuctionStatus.Inactive;
     return true;
 
   }
@@ -191,47 +186,43 @@ contract BidKaroNa {
   function withdrawRefund(uint256 auctionId) public returns (bool) {
 
     // Cannot withdraw from an active auction
-    Auction a = auctions[auctionId];
-    if(a.status == AuctionStatus.Active) {
-      LogFailure("LOG: Cannot withdraw from an active auction.");
+    if(auctions[auctionId].status == AuctionStatus.Active) {
+      emit LogFailure("LOG: Cannot withdraw from an active auction.");
       return false;
     }
 
-    uint256 refund = a.refunds[msg.sender];
-    a.refunds[msg.sender] = 0;
+    uint256 refund = auctions[auctionId].refunds[msg.sender];
+    auctions[auctionId].refunds[msg.sender] = 0;
     
     if (!msg.sender.send(refund)){
-      LogFailure("LOG: Unable to transfer ethers.");
-      a.refunds[msg.sender] = refund;
+      emit LogFailure("LOG: Unable to transfer ethers.");
+      auctions[auctionId].refunds[msg.sender] = refund;
       return false;
     }
 
     return true;
   }
 
-  function placeBid(int auctionId) public returns (bool) {
-    
-    Auction a = auctions[auctionId];
+  function placeBid(uint256 auctionId) public payable returns (bool) {
     
     // inactive auction
-    if (a.status == AuctionStatus.Inactive) {
-      LogFailure("LOG: Auction not active.");
+    if (auctions[auctionId].status == AuctionStatus.Inactive) {
+      emit LogFailure("LOG: Auction not active.");
       return false;
     }
 
     // bid should be greater than reserve price
-    if (msg.value < a.reservePrice) {
-      LogFailure("LOG: Amount less than the reserve price.");
+    if (msg.value < auctions[auctionId].reservePrice) {
+      emit LogFailure("LOG: Amount less than the reserve price.");
       return false;
     }
 
-    uint256 bidId = a.bids.length++;
-    Bid currBid = a.bids[bidId];
-    currBid.bidder = msg.sender;
-    currBid.amount = msg.value;
-    currBid.timeStamp = block.number;
+    uint256 bidId = auctions[auctionId].bids.length++;
+    auctions[auctionId].bids[bidId].bidder = msg.sender;
+    auctions[auctionId].bids[bidId].amount = msg.value;
+    auctions[auctionId].bids[bidId].timeStamp = block.number;
 
-    a.refunds[msg.sender] += msg.value;
+    auctions[auctionId].refunds[msg.sender] += msg.value;
 
     return true;
   }

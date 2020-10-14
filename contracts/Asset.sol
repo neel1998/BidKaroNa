@@ -10,7 +10,7 @@ Every actual asset must be derived from
 this contract.
 */
 
-pragma solidity >=0.4.21 <0.7.0;
+pragma solidity 0.5.16;
 
 contract Asset {
   
@@ -25,13 +25,12 @@ contract Asset {
   }
 
   // Methods
-  constructor(string memory _description) public returns (bool) {
+  constructor(string memory _description) public {
     owner = msg.sender;
     description = _description;
-    return true;
   }
 
-  function getOwner() public returns (address) {
+  function getOwner() public view returns (address) {
     return owner;
   }
 
