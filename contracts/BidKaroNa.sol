@@ -48,8 +48,8 @@ contract BidKaroNa {
   event LogFailure(string log);
 
   // Methods
-  constructor(address _owner) public {
-    owner = _owner;
+  constructor() public {
+    owner = msg.sender;
   }
 
   function partyOwnsAsset(address _party, address _assetAddress) public view returns (bool) {
