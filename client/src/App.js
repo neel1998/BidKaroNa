@@ -1,11 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 // import SimpleStorageContract from "./contracts/SimpleStorage.json";
-import getWeb3 from "./getWeb3";
+// import getWeb3 from "./getWeb3";
 import {Route, Switch } from 'react-router-dom';
 import Home from './Home'
 import CreateNewAuction from './CreateNewAuction'
 import RunningAuctions from './RunningAuctions'
 import PlaceBid from './PlaceBid'
+import Team from './Team'
 import "./App.css";
 
 /*class App extends Component {
@@ -82,6 +83,7 @@ function App() {
           <Route path="/createAuction" component = {CreateNewAuction}/>
           <Route path="/runningAuctions" component = {RunningAuctions}/>
           <Route path="/placeBid" component = {PlaceBid}/>
+          <Route path="/team" component = {Team}/>
           <Route path="/" component = {Home}/>
         </Switch>
     </div>
