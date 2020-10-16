@@ -61,30 +61,30 @@ contract BidKaroNa {
                         address _assetAddress,
                         uint256 _reservePrice,
                         uint256 _deadline,
-                        string memory _title) public returns (uint256) {
+                        string memory _title) public returns (int256) {
     
     // Check if the seller owns the asset
     if (!partyOwnsAsset(msg.sender, _assetAddress)) {
       emit LogFailure("LOG: Seller does not own this asset.");
-      revert();
+      return -1;
     }
     
     // Check if given deadline is in the future
     if (block.timestamp >= _deadline) {
       emit LogFailure("LOG: Invalid deadline.");
-      revert();
+      return -1;
     }
 
     // Check if reserve price is valid
     if (_reservePrice <= 0) {
       emit LogFailure("LOG: Reserve price should be above 0.");
-      revert();
+      return -1;
     }
 
     // Check if asset is not already on auction
     if (activeAssets[_assetAddress]) {
       emit LogFailure("LOG: Item is already on auction.");
-      revert();
+      return -1;
     }
 
     // Creating the auction in Inactive State
@@ -97,7 +97,7 @@ contract BidKaroNa {
     auctions[auctionId].status = AuctionStatus.Inactive;
     activeAssets[_assetAddress] = true;
 
-    return auctionId;
+    return int256(auctionId);
   }
 
   function activateAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
