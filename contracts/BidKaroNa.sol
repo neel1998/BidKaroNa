@@ -231,4 +231,21 @@ contract BidKaroNa {
     return true;
   }
 
+  function getAuctionsLength() public returns(uint256) {
+    return auctions.length;
+  }
+
+  function getAuctionDetails(uint256 auctionId) public returns(
+    address, address, string memory, uint256, uint256, AuctionStatus
+  ) {
+
+    return (
+      auctions[auctionId].seller,
+      auctions[auctionId].assetAddress,
+      auctions[auctionId].title,
+      auctions[auctionId].deadline,
+      auctions[auctionId].reservePrice,
+      auctions[auctionId].status
+    );
+  }
 }
