@@ -46,6 +46,12 @@ contract BidKaroNa {
 
   // Events
   event LogFailure(string log);
+  event auctionCreated(uint256 auctionId, string title, address assetAddress, uint256 reservePrice, uint256 deadline);
+  event auctionActivated(uint256 auctionId);
+  event auctionEnded(uint256 actionId, string newOwner, address newOwnerAddress);
+  event auctionCancelled(uint256 auctionId);
+  event withdrewRefund(address bidder, uint256 auctionId, uint256 refundAmout);
+  event bidPlaced(uint256 auctionId, address bidder, uint256 bidAmount);
 
   // Methods
   constructor() public {
@@ -97,6 +103,7 @@ contract BidKaroNa {
     auctions[auctionId].status = AuctionStatus.Inactive;
     activeAssets[_assetAddress] = true;
 
+    emit auctionCreated(auctionId, _title, _assetAddress, _reservePrice, _deadline);
     return int256(auctionId);
   }
 
@@ -118,6 +125,7 @@ contract BidKaroNa {
     }
     
     auctions[auctionId].status = AuctionStatus.Active;
+    emit auctionActivated(auctionId);
     return true;
   }
 
@@ -138,10 +146,16 @@ contract BidKaroNa {
     auctions[auctionId].status = AuctionStatus.Inactive;
     Asset assetContract = Asset(auctions[auctionId].assetAddress);
 
+    string memory newOwner;
+    address newOwnerAddress;
+
     // no valid bidds were placed
     if(auctions[auctionId].bids.length == 0) {
       // Tranferring ownership of asset back to the seller
       assetContract.setOwner(auctions[auctionId].seller);
+      
+      newOwner = "seller";
+      newOwnerAddress = auctions[auctionId].seller;
     }
     else{
       // Finding index corresponding to the highest bid
@@ -161,7 +175,12 @@ contract BidKaroNa {
       // Transferring the highest bid amount to the seller
       auctions[auctionId].refunds[auctions[auctionId].bids[bidIdx].bidder] -= auctions[auctionId].bids[bidIdx].amount;
       auctions[auctionId].refunds[auctions[auctionId].seller] += auctions[auctionId].bids[bidIdx].amount;
+      
+      newOwner = "bidder";
+      newOwnerAddress = auctions[auctionId].bids[bidIdx].bidder;
     }
+
+    emit auctionEnded(auctionId, newOwner, newOwnerAddress);
     return true;  
   }
 
@@ -183,8 +202,8 @@ contract BidKaroNa {
     }
 
     auctions[auctionId].status = AuctionStatus.Inactive;
+    emit auctionCancelled(auctionId);
     return true;
-
   }
 
   function withdrawRefund(uint256 auctionId) public returns (bool) {
@@ -204,6 +223,7 @@ contract BidKaroNa {
       return false;
     }
 
+    emit withdrewRefund(msg.sender, auctionId, refund);
     return true;
   }
 
@@ -228,14 +248,15 @@ contract BidKaroNa {
 
     auctions[auctionId].refunds[msg.sender] += msg.value;
 
+    emit bidPlaced(auctionId, msg.sender, msg.value);
     return true;
   }
 
-  function getAuctionsLength() public returns(uint256) {
+  function getAuctionsLength() public view returns(uint256) {
     return auctions.length;
   }
 
-  function getAuctionDetails(uint256 auctionId) public returns(
+  function getAuctionDetails(uint256 auctionId) public view returns(
     address, address, string memory, uint256, uint256, AuctionStatus
   ) {
 
