@@ -67,6 +67,11 @@ export default class CreateNewAuction extends Component {
   }
 
   componentDidMount() {
+    let date = new Date()
+    date.setHours(23,59)
+    this.setState({
+      selectedDate: date
+    })
   }
   render() {
     return (
