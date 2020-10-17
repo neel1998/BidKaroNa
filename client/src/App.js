@@ -1,13 +1,18 @@
-import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
-import getWeb3 from "./getWeb3";
-
+import React from "react";
+// import SimpleStorageContract from "./contracts/SimpleStorage.json";
+// import getWeb3 from "./getWeb3";
+import {Route, Switch } from 'react-router-dom';
+import Home from './Home'
+import CreateNewAuction from './CreateNewAuction'
+import RunningAuctions from './RunningAuctions'
+import PlaceBid from './PlaceBid'
+import Team from './Team'
 import "./App.css";
 
-class App extends Component {
+/*class App extends Component {
   state = { storageValue: 0, web3: null, accounts: null, contract: null };
 
-  componentDidMount = async () => {
+   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
@@ -68,6 +73,21 @@ class App extends Component {
       </div>
     );
   }
+
+}*/
+
+function App() {
+  return (
+    <div className = "App">
+        <Switch>
+          <Route path="/createAuction" component = {CreateNewAuction}/>
+          <Route path="/runningAuctions" component = {RunningAuctions}/>
+          <Route path="/placeBid" component = {PlaceBid}/>
+          <Route path="/team" component = {Team}/>
+          <Route path="/" component = {Home}/>
+        </Switch>
+    </div>
+  );
 }
 
 export default App;
