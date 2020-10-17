@@ -10,7 +10,8 @@ export default class Home extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+
   }
   render() {
     return (

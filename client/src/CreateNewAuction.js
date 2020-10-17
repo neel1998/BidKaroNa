@@ -7,12 +7,15 @@ import DateFnsUtils from '@date-io/date-fns';
 import { ThemeProvider } from '@material-ui/core/styles'
 import theme from './theme'
 import './form.css'
+import Web3 from 'web3';
+const BidKaroNaContract = require("./contracts/BidKaroNa.json")
 
 export default class CreateNewAuction extends Component {
   constructor(props) {
     super(props)
     this.state = {
       'title':'',
+      'contract_addr' : '',
       'asset_addr': '',
       'reserved_price':'',
       'selectedDate': new Date()
@@ -24,6 +27,37 @@ export default class CreateNewAuction extends Component {
     this.setState({
       [name]: value
     });
+  }
+
+
+  createAuction = async () => {
+    const web3 = new Web3(window.ethereum);
+    // console.log(BidKaroNaContract)
+    const contract_add = this.state.contract_addr
+    const assetAddress = this.state.asset_addr
+    const time = Date.parse(this.state.selectedDate)/1000
+    const price = this.state.reserved_price
+    const title = this.state.title
+
+    const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, contract_add);
+    await window.ethereum.enable();
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+    // console.log(accounts)
+    const result = BidKaroNa.methods.createAuction(assetAddress, price, time, title).send({ from: account });
+    result.then((val) => {
+      if ("auctionCreated" in val.events) {
+        window.alert("Auction created successfully. Your auction Id is : " + val.events.auctionCreated.returnValues.auctionId)
+        window.location.reload("/runningAuctions")
+      } else if ("LogFailure" in val.events) {
+        window.alert("Auction creation failed. " + val.events.LogFailure.returnValues.log)
+      } else {
+        window.alert("Something went wrong")
+      }
+    }).catch((err) => {
+      window.alert("Something went wrong")
+      console.log(err)
+    })
   }
 
   handleDateChange = (date) => {
@@ -60,6 +94,19 @@ export default class CreateNewAuction extends Component {
 
                 <TextField
                   variant="outlined"
+                  label = "Auction Contract Address"
+                  type = "text"
+                  name = "contract_addr"
+                  style = {{"width" : "60%", "margin":"10px"}}
+                  placeholder = "Enter Auction Contract Address"
+                  value = {this.state.contract_addr}
+                  onChange = {this.handleInputChange}
+                  required
+                />
+                <br/>
+
+                <TextField
+                  variant="outlined"
                   label = "Asset Address"
                   type = "text"
                   name = "asset_addr"
@@ -74,7 +121,7 @@ export default class CreateNewAuction extends Component {
                 <TextField
                   variant="outlined"
                   label = "Reserved Price"
-                  type = "text"
+                  type = "number"
                   name = "reserved_price"
                   style = {{"width" : "60%", "margin":"10px"}}
                   placeholder = "Enter Reserved Price in Ethers"
@@ -98,7 +145,7 @@ export default class CreateNewAuction extends Component {
                 <br/>
                 <br/>
 
-                <Button variant = "contained" style = {{'color' : '#FFFFFF', 'background' : '#006064'}}>Create Auction</Button>
+                <Button variant = "contained" style = {{'color' : '#FFFFFF', 'background' : '#006064'}} onClick = {this.createAuction}>Create Auction</Button>
                 <br/>
                 <br/>
 
