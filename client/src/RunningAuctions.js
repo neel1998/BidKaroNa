@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Navbar from './Navbar';
 import Web3 from 'web3';
-import {contractAddress} from './constants'
 import AuctionListLayout from './AuctionListLayout'
 const BidKaroNaContract = require("./contracts/BidKaroNa.json")
 
@@ -17,8 +16,8 @@ export default class RunningAuctions extends Component {
 
   async componentDidMount() {
     const web3 = new Web3(window.ethereum);
-
-    const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, contractAddress);
+    let networkId = Object.keys(BidKaroNaContract.networks)[0]
+    const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
     var totalAuctions = await BidKaroNa.methods.getAuctionsLength().call();
 
     new Promise(async function(res, rej) {

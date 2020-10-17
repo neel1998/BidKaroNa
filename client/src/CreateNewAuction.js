@@ -15,7 +15,6 @@ export default class CreateNewAuction extends Component {
     super(props)
     this.state = {
       'title':'',
-      'contract_addr' : '',
       'asset_addr': '',
       'reserved_price':'',
       'selectedDate': new Date()
@@ -33,13 +32,13 @@ export default class CreateNewAuction extends Component {
   createAuction = async () => {
     const web3 = new Web3(window.ethereum);
     // console.log(BidKaroNaContract)
-    const contract_add = this.state.contract_addr
     const assetAddress = this.state.asset_addr
     const time = Date.parse(this.state.selectedDate)/1000
     const price = this.state.reserved_price
     const title = this.state.title
 
-    const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, contract_add);
+    let networkId = Object.keys(BidKaroNaContract.networks)[0]
+    const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
     await window.ethereum.enable();
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
@@ -61,6 +60,7 @@ export default class CreateNewAuction extends Component {
   }
 
   handleDateChange = (date) => {
+    date.setHours(23,59)
     this.setState({
       selectedDate: date
     });
@@ -87,19 +87,6 @@ export default class CreateNewAuction extends Component {
                   style = {{"width" : "60%", "margin":"10px"}}
                   placeholder = "Enter Auction Title"
                   value = {this.state.title}
-                  onChange = {this.handleInputChange}
-                  required
-                />
-                <br/>
-
-                <TextField
-                  variant="outlined"
-                  label = "Auction Contract Address"
-                  type = "text"
-                  name = "contract_addr"
-                  style = {{"width" : "60%", "margin":"10px"}}
-                  placeholder = "Enter Auction Contract Address"
-                  value = {this.state.contract_addr}
                   onChange = {this.handleInputChange}
                   required
                 />
