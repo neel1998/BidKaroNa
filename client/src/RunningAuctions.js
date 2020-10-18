@@ -13,8 +13,13 @@ export default class RunningAuctions extends Component {
   }
 
 
-
   async componentDidMount() {
+    const createAuctionLayout = (auction) => {
+        return <AuctionListLayout 
+                    auction = {auction}
+                    history = {this.props.history}
+                />
+    }
     const web3 = new Web3(window.ethereum);
     let networkId = Object.keys(BidKaroNaContract.networks)[0]
     const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
@@ -24,9 +29,8 @@ export default class RunningAuctions extends Component {
       var auctionList = []
       for (let i = 0; i < totalAuctions; i ++) {
         let auction = await BidKaroNa.methods.getAuctionDetails(i).call();
-        // console.log(auction)
-        auctionList.push(<AuctionListLayout
-          auction = {auction}/>)
+        auction.id = i;
+        auctionList.push(createAuctionLayout(auction))
       }
       res(auctionList)
     }).then((auctions) => {

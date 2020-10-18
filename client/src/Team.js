@@ -28,7 +28,6 @@ export default class Team extends Component {
             <TeamMember name = {"Anush Mahajan"} email = {"anush.mahajan@research.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601318596qfyeqk7mvf.png"}/>
             <TeamMember name = {"Rizwan Ali"} email = {"rizwan.ali@students.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601316264zmyndxmi21.png"}/>
             <TeamMember name = {"Neel Trivedi"} email = {"neel.trivedi@research.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601315366ahksehn0fu.png"}/>
-
           </ThemeProvider>
       </div>
     );

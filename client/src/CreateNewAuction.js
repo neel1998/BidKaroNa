@@ -83,7 +83,6 @@ export default class CreateNewAuction extends Component {
           <div style = {{"textAlign" : "center",'color' : '#006064'}}>
               <form className="form">
                 <h3>Create New Auction</h3>
-
                 <TextField
                   variant="outlined"
                   label = "Auction Title"
@@ -96,7 +95,6 @@ export default class CreateNewAuction extends Component {
                   required
                 />
                 <br/>
-
                 <TextField
                   variant="outlined"
                   label = "Asset Address"
@@ -109,7 +107,6 @@ export default class CreateNewAuction extends Component {
                   required
                 />
                 <br/>
-
                 <TextField
                   variant="outlined"
                   label = "Reserved Price"
@@ -122,7 +119,6 @@ export default class CreateNewAuction extends Component {
                   required
                 />
                 <br/>
-
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                     clearable

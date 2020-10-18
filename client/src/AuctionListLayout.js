@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -7,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '20px',
     width: 'inline',
     margin : '10px',
-    height : '200px',
+    height : '235px',
     padding: '10px',
     color: '#455A64',
     textAlign : 'left'
@@ -16,7 +17,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AuctionListLayout(props) {
-
+  const history = props.history;
+  const placeBid  = () => {
+    history.push("/placeBid?id=" + props.auction.id);
+  }
   const classes = useStyles();
   let auction = props.auction
   let date = new Date(0)
@@ -28,6 +32,7 @@ export default function AuctionListLayout(props) {
       <p><u>Reserved Price:</u> {auction[4]}</p>
       <p><u>Deadline:</u> {date.toString()}</p>
       <p><u>Status:</u> {auction[5] === 0 ? "Active" : "Inactive"}</p>
+      <p><Button variant = "contained" style = {{'color' : '#FFFFFF', 'background' : '#006064'}} onClick={placeBid}>View Details</Button></p>
     </div>
   );
 }
