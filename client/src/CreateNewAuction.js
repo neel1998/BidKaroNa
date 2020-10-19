@@ -129,10 +129,9 @@ export default class CreateNewAuction extends Component {
                     format="dd/MM/yyyy"
                     style = {{"width" : "40%", "margin":"10px"}}
                   />
-                  </MuiPickersUtilsProvider>
+                </MuiPickersUtilsProvider>
                 <br/>
                 <br/>
-
                 <Button variant = "contained" style = {{'color' : '#FFFFFF', 'background' : '#006064'}} onClick = {this.createAuction}>Create Auction</Button>
                 <br/>
                 <br/>
