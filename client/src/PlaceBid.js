@@ -20,6 +20,8 @@ export default class PlaceBid extends Component {
     const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
     const auctionId = new URLSearchParams(this.props.location.search).get("id")
     const auctionDetails = await BidKaroNa.methods.getAuctionDetails(auctionId).call();
+    var d = new Date(auctionDetails[3] * 1000)
+    auctionDetails[3] = d.toDateString()
     this.setState({
         auctionDetails: auctionDetails
     })    
