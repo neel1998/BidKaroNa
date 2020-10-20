@@ -71,25 +71,19 @@ contract BidKaroNa {
     
     // Check if the seller owns the asset
     if (!partyOwnsAsset(msg.sender, _assetAddress)) {
-      emit LogFailure("LOG: Seller does not own this asset.");
+      emit LogFailure("Seller does not own this asset.");
       return -1;
     }
     
     // Check if given deadline is in the future
     if (block.timestamp >= _deadline) {
-      emit LogFailure("LOG: Invalid deadline.");
-      return -1;
-    }
-
-    // Check if reserve price is valid
-    if (_reservePrice <= 0) {
-      emit LogFailure("LOG: Reserve price should be above 0.");
+      emit LogFailure("Invalid deadline.");
       return -1;
     }
 
     // Check if asset is not already on auction
     if (activeAssets[_assetAddress]) {
-      emit LogFailure("LOG: Item is already on auction.");
+      emit LogFailure("Item is already on auction.");
       return -1;
     }
 
@@ -110,17 +104,17 @@ contract BidKaroNa {
   function activateAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
     
     if(block.timestamp >= auctions[auctionId].deadline) {
-      emit LogFailure("LOG: The deadline for auction has already passed."); 
+      emit LogFailure("The deadline for auction has already passed."); 
       return false;
     }
     
     if (!partyOwnsAsset(address(this), auctions[auctionId].assetAddress)){
-      emit LogFailure("LOG: Transfer ownership to BidKaroNa before activating the auction."); 
+      emit LogFailure("Transfer ownership to BidKaroNa before activating the auction."); 
       return false;
     }
 
     if(auctions[auctionId].status == AuctionStatus.Active) {
-      emit LogFailure("LOG: The auction is already active."); 
+      emit LogFailure("The auction is already active."); 
       return false;
     }
     
@@ -133,13 +127,13 @@ contract BidKaroNa {
 
     // The deadline should be gone
     if (block.timestamp < auctions[auctionId].deadline) {
-      emit LogFailure("LOG: Cannot end auction before the deadline."); 
+      emit LogFailure("Cannot end auction before the deadline."); 
       return false;
     }
 
     // Auction needs to be active, so that it is ended only once
     if (auctions[auctionId].status == AuctionStatus.Inactive) {
-      emit LogFailure("LOG: Cannot end an already ended/cancelled auction."); 
+      emit LogFailure("Cannot end an already ended/cancelled auction."); 
       return false;
     }
 
@@ -187,17 +181,17 @@ contract BidKaroNa {
   function cancelAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
 
     if (auctions[auctionId].status == AuctionStatus.Inactive) {
-      emit LogFailure("LOG: Cannot cancel an inactive auction."); 
+      emit LogFailure("Cannot cancel an inactive auction."); 
       return false;
     }
 
     if (block.timestamp >= auctions[auctionId].deadline) {
-      emit LogFailure("LOG: Cannot cancel an auction after the deadline."); 
+      emit LogFailure("Cannot cancel an auction after the deadline."); 
       return false;
     }
 
     if (auctions[auctionId].bids.length > 0) {
-      emit LogFailure("LOG: Cannot cancel the auction, there are valid bids placed");
+      emit LogFailure("Cannot cancel the auction, there are valid bids placed");
       return false;
     }
 
@@ -210,7 +204,7 @@ contract BidKaroNa {
 
     // Cannot withdraw from an active auction
     if(auctions[auctionId].status == AuctionStatus.Active) {
-      emit LogFailure("LOG: Cannot withdraw from an active auction.");
+      emit LogFailure("Cannot withdraw from an active auction.");
       return false;
     }
 
@@ -218,7 +212,7 @@ contract BidKaroNa {
     auctions[auctionId].refunds[msg.sender] = 0;
     
     if (!msg.sender.send(refund)){
-      emit LogFailure("LOG: Unable to transfer ethers.");
+      emit LogFailure("Unable to transfer ethers.");
       auctions[auctionId].refunds[msg.sender] = refund;
       return false;
     }
@@ -231,13 +225,13 @@ contract BidKaroNa {
     
     // inactive auction
     if (auctions[auctionId].status == AuctionStatus.Inactive) {
-      emit LogFailure("LOG: Auction not active.");
+      emit LogFailure("Auction not active.");
       return false;
     }
 
     // bid should be greater than reserve price
     if (msg.value < auctions[auctionId].reservePrice) {
-      emit LogFailure("LOG: Amount less than the reserve price.");
+      emit LogFailure("Amount less than the reserve price.");
       return false;
     }
 
