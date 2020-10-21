@@ -11,7 +11,7 @@ export default class Home extends Component {
   }
 
   async componentDidMount() {
-
+    // let networkId = Object.keys(BidKaroNaContract.networks)[0]
   }
   render() {
     return (

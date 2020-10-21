@@ -44,6 +44,10 @@ export default function Navbar(props) {
     history.push("/runningAuctions")
   }
 
+  const createAsset = () => {
+    history.push("/createAsset")
+  }
+
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -63,6 +67,7 @@ export default function Navbar(props) {
           <Button color="inherit" onClick = {goHome}>Home</Button>
           <Button color="inherit" onClick = {createAuction}>Create New Auction</Button>
           <Button color="inherit" onClick = {runningAuctions}>View Running Auctions</Button>
+          <Button color="inherit" onClick = {createAsset}>Create Asset</Button>
         </Toolbar>
       </AppBar>
 
