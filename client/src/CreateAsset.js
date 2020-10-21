@@ -6,7 +6,7 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import theme from './theme'
 import './form.css'
 import Web3 from 'web3';
-const AssetContract = require("./Asset.json")
+const AssetContract = require("./contracts/Asset.json")
 
 export default class CreateAsset extends Component {
   constructor(props) {
