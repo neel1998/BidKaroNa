@@ -96,32 +96,38 @@ contract BidKaroNa {
     auctions[auctionId].title = _title;
     auctions[auctionId].status = AuctionStatus.Inactive;
     activeAssets[_assetAddress] = true;
-
     emit auctionCreated(auctionId, _title, _assetAddress, _reservePrice, _deadline);
+    
+    // changing the ownership of the asset
+    Asset asset = Asset(_assetAddress);
+    asset.setOwner(address(this));
+    emit auctionActivated(auctionId);
+    auctions[auctionId].status = AuctionStatus.Active;
+    
     return int256(auctionId);
   }
 
-  function activateAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
+//   function activateAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
     
-    if(block.timestamp >= auctions[auctionId].deadline) {
-      emit LogFailure("The deadline for auction has already passed."); 
-      return false;
-    }
+//     if(block.timestamp >= auctions[auctionId].deadline) {
+//       emit LogFailure("The deadline for auction has already passed."); 
+//       return false;
+//     }
     
-    if (!partyOwnsAsset(address(this), auctions[auctionId].assetAddress)){
-      emit LogFailure("Transfer ownership to BidKaroNa before activating the auction."); 
-      return false;
-    }
+//     if (!partyOwnsAsset(address(this), auctions[auctionId].assetAddress)){
+//       emit LogFailure("Transfer ownership to BidKaroNa before activating the auction."); 
+//       return false;
+//     }
 
-    if(auctions[auctionId].status == AuctionStatus.Active) {
-      emit LogFailure("The auction is already active."); 
-      return false;
-    }
+//     if(auctions[auctionId].status == AuctionStatus.Active) {
+//       emit LogFailure("The auction is already active."); 
+//       return false;
+//     }
     
-    auctions[auctionId].status = AuctionStatus.Active;
-    emit auctionActivated(auctionId);
-    return true;
-  }
+//     auctions[auctionId].status = AuctionStatus.Active;
+//     emit auctionActivated(auctionId);
+//     return true;
+//   }
 
   function endAuction(uint256 auctionId) public returns (bool) {
 
@@ -178,27 +184,27 @@ contract BidKaroNa {
     return true;  
   }
 
-  function cancelAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
+//   function cancelAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
 
-    if (auctions[auctionId].status == AuctionStatus.Inactive) {
-      emit LogFailure("Cannot cancel an inactive auction."); 
-      return false;
-    }
+//     if (auctions[auctionId].status == AuctionStatus.Inactive) {
+//       emit LogFailure("Cannot cancel an inactive auction."); 
+//       return false;
+//     }
 
-    if (block.timestamp >= auctions[auctionId].deadline) {
-      emit LogFailure("Cannot cancel an auction after the deadline."); 
-      return false;
-    }
+//     if (block.timestamp >= auctions[auctionId].deadline) {
+//       emit LogFailure("Cannot cancel an auction after the deadline."); 
+//       return false;
+//     }
 
-    if (auctions[auctionId].bids.length > 0) {
-      emit LogFailure("Cannot cancel the auction, there are valid bids placed");
-      return false;
-    }
+//     if (auctions[auctionId].bids.length > 0) {
+//       emit LogFailure("Cannot cancel the auction, there are valid bids placed");
+//       return false;
+//     }
 
-    auctions[auctionId].status = AuctionStatus.Inactive;
-    emit auctionCancelled(auctionId);
-    return true;
-  }
+//     auctions[auctionId].status = AuctionStatus.Inactive;
+//     emit auctionCancelled(auctionId);
+//     return true;
+//   }
 
   function withdrawRefund(uint256 auctionId) public returns (bool) {
 
@@ -207,18 +213,37 @@ contract BidKaroNa {
       emit LogFailure("Cannot withdraw from an active auction.");
       return false;
     }
-
-    uint256 refund = auctions[auctionId].refunds[msg.sender];
-    auctions[auctionId].refunds[msg.sender] = 0;
     
-    if (!msg.sender.send(refund)){
-      emit LogFailure("Unable to transfer ethers.");
-      auctions[auctionId].refunds[msg.sender] = refund;
-      return false;
+    uint256 numBids = auctions[auctionId].bids.length++;
+    uint256 err = 0;
+    for(uint256 i=0; i<numBids; i++){
+        address payable adr = address(uint160(auctions[auctionId].bids[i].bidder));
+        uint256 refund = auctions[auctionId].refunds[adr];
+        emit withdrewRefund(adr, auctionId, refund + 100);
+        auctions[auctionId].refunds[adr] = 0;
+        if(!adr.send(refund)){
+            emit withdrewRefund(adr, auctionId, refund);
+            auctions[auctionId].refunds[adr] = refund;
+            err += 1;
+        }
     }
+    if (err > 0){
+        return false;
+    }
+    else {
+        return true;
+    }
+    
+    // uint256 refund = auctions[auctionId].refunds[msg.sender];
+    // auctions[auctionId].refunds[msg.sender] = 0;
+    
+    // if (!msg.sender.send(refund)){
+    //   emit LogFailure("Unable to transfer ethers.");
+    //   auctions[auctionId].refunds[msg.sender] = refund;
+    //   return false;
+    // }
 
-    emit withdrewRefund(msg.sender, auctionId, refund);
-    return true;
+    // return true;
   }
 
   function placeBid(uint256 auctionId) public payable returns (bool) {
@@ -249,7 +274,10 @@ contract BidKaroNa {
   function getAuctionsLength() public view returns(uint256) {
     return auctions.length;
   }
-
+  
+  function getAuctionBalance() public view returns(uint256) {
+      return address(this).balance;
+  }
   function getAuctionDetails(uint256 auctionId) public view returns(
     address, address, string memory, uint256, uint256, AuctionStatus
   ) {
