@@ -43,20 +43,26 @@ export default class CreateNewAuction extends Component {
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
     // console.log(accounts)
-    const result = BidKaroNa.methods.createAuction(assetAddress, price, time, title).send({ from: account });
-    result.then((val) => {
-      if ("auctionCreated" in val.events) {
-        window.alert("Auction created successfully. Your auction Id is : " + val.events.auctionCreated.returnValues.auctionId)
-        window.location.reload("/runningAuctions")
-      } else if ("LogFailure" in val.events) {
-        window.alert("Auction creation failed. " + val.events.LogFailure.returnValues.log)
-      } else {
-        window.alert("Something went wrong")
-      }
-    }).catch((err) => {
-      window.alert("Something went wrong")
-      console.log(err)
-    })
+    if (price >= 0) {
+        const result = BidKaroNa.methods.createAuction(assetAddress, price, time, title).send({ from: account });
+        result.then((val) => {
+        if ("auctionCreated" in val.events) {
+            window.alert("Auction created successfully. Your auction Id is : " + val.events.auctionCreated.returnValues.auctionId)
+            window.location.reload("/runningAuctions")
+        } else if ("LogFailure" in val.events) {
+            window.alert("Auction creation failed. " + val.events.LogFailure.returnValues.log)
+        } else {
+            window.alert("Something went wrong")
+        }
+        }).catch((err) => {
+            window.alert("Something went wrong")
+            console.log(err)
+        })
+    }
+    else {
+        window.alert("Negative Price isn't allowed")
+    }
+    
   }
 
   handleDateChange = (date) => {
