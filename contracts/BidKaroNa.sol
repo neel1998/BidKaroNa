@@ -181,7 +181,28 @@ contract BidKaroNa {
     }
 
     emit auctionEnded(auctionId, newOwner, newOwnerAddress);
-    return true;  
+    
+    // process all refunds
+    uint256 numBids = auctions[auctionId].bids.length++;
+    uint256 err = 0;
+    for(uint256 i=0; i<numBids; i++){
+        address payable adr = address(uint160(auctions[auctionId].bids[i].bidder));
+        uint256 refund = auctions[auctionId].refunds[adr];
+        auctions[auctionId].refunds[adr] = 0;
+        if(!adr.send(refund)){
+            emit withdrewRefund(adr, auctionId, refund);
+            auctions[auctionId].refunds[adr] = refund;
+            err += 1;
+        }
+    }
+    if (err > 0){
+        // all refunds unsuccessful, auction is active
+        activeAssets[auctions[auctionId].assetAddress] = true;
+        return false;
+    }
+    else {
+        return true;
+    }
   }
 
 //   function cancelAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
@@ -214,36 +235,16 @@ contract BidKaroNa {
       return false;
     }
     
-    uint256 numBids = auctions[auctionId].bids.length++;
-    uint256 err = 0;
-    for(uint256 i=0; i<numBids; i++){
-        address payable adr = address(uint160(auctions[auctionId].bids[i].bidder));
-        uint256 refund = auctions[auctionId].refunds[adr];
-        emit withdrewRefund(adr, auctionId, refund + 100);
-        auctions[auctionId].refunds[adr] = 0;
-        if(!adr.send(refund)){
-            emit withdrewRefund(adr, auctionId, refund);
-            auctions[auctionId].refunds[adr] = refund;
-            err += 1;
-        }
-    }
-    if (err > 0){
-        return false;
-    }
-    else {
-        return true;
-    }
+    uint256 refund = auctions[auctionId].refunds[msg.sender];
+    auctions[auctionId].refunds[msg.sender] = 0;
     
-    // uint256 refund = auctions[auctionId].refunds[msg.sender];
-    // auctions[auctionId].refunds[msg.sender] = 0;
-    
-    // if (!msg.sender.send(refund)){
-    //   emit LogFailure("Unable to transfer ethers.");
-    //   auctions[auctionId].refunds[msg.sender] = refund;
-    //   return false;
-    // }
+    if (!msg.sender.send(refund)){
+      emit LogFailure("Unable to transfer ethers.");
+      auctions[auctionId].refunds[msg.sender] = refund;
+      return false;
+    }
 
-    // return true;
+    return true;
   }
 
   function placeBid(uint256 auctionId) public payable returns (bool) {
