@@ -20,7 +20,7 @@ contract Asset {
 
   // Modifiers
   modifier onlyOwner() {
-    require(msg.sender == owner);
+    require((tx.origin == owner) || (msg.sender == owner), "Only owner can call this");
     _;
   }
 
