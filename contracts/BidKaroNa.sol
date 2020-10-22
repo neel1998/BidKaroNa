@@ -31,6 +31,7 @@ contract BidKaroNa {
     string title;
     mapping(address => uint256) refunds;
     AuctionStatus status;
+    address[] bidderAddresses;
   }
 
   // State variables
@@ -47,9 +48,7 @@ contract BidKaroNa {
   // Events
   event LogFailure(string log);
   event auctionCreated(uint256 auctionId, string title, address assetAddress, uint256 reservePrice, uint256 deadline);
-  event auctionActivated(uint256 auctionId);
   event auctionEnded(uint256 actionId, string newOwner, address newOwnerAddress);
-  event auctionCancelled(uint256 auctionId);
   event withdrewRefund(address bidder, uint256 auctionId, uint256 refundAmout);
   event bidPlaced(uint256 auctionId, address bidder, uint256 bidAmount);
 
@@ -87,47 +86,23 @@ contract BidKaroNa {
       return -1;
     }
 
-    // Creating the auction in Inactive State
+    // changing the ownership of the asset
+    Asset asset = Asset(_assetAddress);
+    asset.setOwner(address(this));
+
+    // Creating the auction and activating it
     uint256 auctionId = auctions.length++;
     auctions[auctionId].reservePrice = _reservePrice;
     auctions[auctionId].seller = msg.sender;
     auctions[auctionId].assetAddress = _assetAddress;
     auctions[auctionId].deadline = _deadline;
     auctions[auctionId].title = _title;
-    auctions[auctionId].status = AuctionStatus.Inactive;
-    activeAssets[_assetAddress] = true;
-    emit auctionCreated(auctionId, _title, _assetAddress, _reservePrice, _deadline);
-    
-    // changing the ownership of the asset
-    Asset asset = Asset(_assetAddress);
-    asset.setOwner(address(this));
-    emit auctionActivated(auctionId);
     auctions[auctionId].status = AuctionStatus.Active;
-    
+    activeAssets[_assetAddress] = true;
+
+    emit auctionCreated(auctionId, _title, _assetAddress, _reservePrice, _deadline);
     return int256(auctionId);
   }
-
-//   function activateAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
-    
-//     if(block.timestamp >= auctions[auctionId].deadline) {
-//       emit LogFailure("The deadline for auction has already passed."); 
-//       return false;
-//     }
-    
-//     if (!partyOwnsAsset(address(this), auctions[auctionId].assetAddress)){
-//       emit LogFailure("Transfer ownership to BidKaroNa before activating the auction."); 
-//       return false;
-//     }
-
-//     if(auctions[auctionId].status == AuctionStatus.Active) {
-//       emit LogFailure("The auction is already active."); 
-//       return false;
-//     }
-    
-//     auctions[auctionId].status = AuctionStatus.Active;
-//     emit auctionActivated(auctionId);
-//     return true;
-//   }
 
   function endAuction(uint256 auctionId) public returns (bool) {
 
@@ -139,7 +114,7 @@ contract BidKaroNa {
 
     // Auction needs to be active, so that it is ended only once
     if (auctions[auctionId].status == AuctionStatus.Inactive) {
-      emit LogFailure("Cannot end an already ended/cancelled auction."); 
+      emit LogFailure("Cannot end an already ended auction."); 
       return false;
     }
 
@@ -149,83 +124,62 @@ contract BidKaroNa {
     string memory newOwner;
     address newOwnerAddress;
 
-    // no valid bidds were placed
-    if(auctions[auctionId].bids.length == 0) {
+    if(auctions[auctionId].bids.length == 0) { // no valid bidds were placed
       // Tranferring ownership of asset back to the seller
       assetContract.setOwner(auctions[auctionId].seller);
-      
       newOwner = "seller";
       newOwnerAddress = auctions[auctionId].seller;
     }
     else{
       // Finding index corresponding to the highest bid
-      uint256 bidIdx = 0;
-      for(uint256 i=1; i<auctions[auctionId].bids.length; i++) {
-        if(auctions[auctionId].bids[i].amount > auctions[auctionId].bids[bidIdx].amount) {
-          bidIdx = i;
+      address highestBidder;
+      uint256 highestBid = 0;
+      for(uint256 i=0; i<auctions[auctionId].bidderAddresses.length; i++) {
+        address currBidder = auctions[auctionId].bidderAddresses[i];
+        if(auctions[auctionId].refunds[currBidder] > highestBid) {
+          highestBid = auctions[auctionId].refunds[currBidder];
+          highestBidder = currBidder;
         }
       }
 
-      // Marking the asset on auction as inactive
-      activeAssets[auctions[auctionId].assetAddress] = false;
-
       // Transferring the ownership to the highest bidder
-      assetContract.setOwner(auctions[auctionId].bids[bidIdx].bidder);
+      assetContract.setOwner(highestBidder);
 
       // Transferring the highest bid amount to the seller
-      auctions[auctionId].refunds[auctions[auctionId].bids[bidIdx].bidder] -= auctions[auctionId].bids[bidIdx].amount;
-      auctions[auctionId].refunds[auctions[auctionId].seller] += auctions[auctionId].bids[bidIdx].amount;
+      auctions[auctionId].refunds[highestBidder] -= highestBid;
+      auctions[auctionId].refunds[auctions[auctionId].seller] += highestBid;
       
       newOwner = "bidder";
-      newOwnerAddress = auctions[auctionId].bids[bidIdx].bidder;
+      newOwnerAddress = highestBidder;
     }
+
+    // Marking the asset on auction as inactive
+    activeAssets[auctions[auctionId].assetAddress] = false;
 
     emit auctionEnded(auctionId, newOwner, newOwnerAddress);
     
-    // process all refunds
-    uint256 numBids = auctions[auctionId].bids.length++;
+    // Process all refunds related to this auction
     uint256 err = 0;
-    for(uint256 i=0; i<numBids; i++){
-        address payable adr = address(uint160(auctions[auctionId].bids[i].bidder));
-        uint256 refund = auctions[auctionId].refunds[adr];
-        auctions[auctionId].refunds[adr] = 0;
-        if(!adr.send(refund)){
-            emit withdrewRefund(adr, auctionId, refund);
-            auctions[auctionId].refunds[adr] = refund;
-            err += 1;
-        }
+    for(uint256 i=0; i<auctions[auctionId].bidderAddresses.length; i++) {
+      address payable adr = address(uint160(auctions[auctionId].bidderAddresses[i]));
+      uint256 refund = auctions[auctionId].refunds[adr];
+      auctions[auctionId].refunds[adr] = 0;
+      if(!adr.send(refund)){ // Failed refund
+          auctions[auctionId].refunds[adr] = refund;
+          err += 1;
+      }
+      else{ // Successful refund
+          emit withdrewRefund(adr, auctionId, refund);
+      }
     }
-    if (err > 0){
-        // all refunds unsuccessful, auction is active
-        activeAssets[auctions[auctionId].assetAddress] = true;
+    if(err > 0){ // At least one refund failed
         return false;
     }
-    else {
+    else{
         return true;
     }
+
   }
-
-//   function cancelAuction(uint256 auctionId) public onlySeller(auctionId) returns (bool) {
-
-//     if (auctions[auctionId].status == AuctionStatus.Inactive) {
-//       emit LogFailure("Cannot cancel an inactive auction."); 
-//       return false;
-//     }
-
-//     if (block.timestamp >= auctions[auctionId].deadline) {
-//       emit LogFailure("Cannot cancel an auction after the deadline."); 
-//       return false;
-//     }
-
-//     if (auctions[auctionId].bids.length > 0) {
-//       emit LogFailure("Cannot cancel the auction, there are valid bids placed");
-//       return false;
-//     }
-
-//     auctions[auctionId].status = AuctionStatus.Inactive;
-//     emit auctionCancelled(auctionId);
-//     return true;
-//   }
 
   function withdrawRefund(uint256 auctionId) public returns (bool) {
 
@@ -237,13 +191,13 @@ contract BidKaroNa {
     
     uint256 refund = auctions[auctionId].refunds[msg.sender];
     auctions[auctionId].refunds[msg.sender] = 0;
-    
     if (!msg.sender.send(refund)){
       emit LogFailure("Unable to transfer ethers.");
       auctions[auctionId].refunds[msg.sender] = refund;
       return false;
     }
-
+    
+    emit withdrewRefund(msg.sender, auctionId, refund);
     return true;
   }
 
@@ -261,12 +215,27 @@ contract BidKaroNa {
       return false;
     }
 
+    // Adding the bid
     uint256 bidId = auctions[auctionId].bids.length++;
     auctions[auctionId].bids[bidId].bidder = msg.sender;
     auctions[auctionId].bids[bidId].amount = msg.value;
     auctions[auctionId].bids[bidId].timeStamp = block.timestamp;
 
+    // Tracking the money deposited
     auctions[auctionId].refunds[msg.sender] += msg.value;
+
+    // Adding to the bidders array
+    bool alreadyVoted = false; 
+    for(uint256 i=0; i<auctions[auctionId].bidderAddresses.length; i++) {
+      if(auctions[auctionId].bidderAddresses[i] == msg.sender) {
+        alreadyVoted = true;
+        break;
+      }
+    }
+    if(!alreadyVoted) {
+      uint256 bidderAddressId = auctions[auctionId].bidderAddresses.length++;
+      auctions[auctionId].bidderAddresses[bidderAddressId] = msg.sender;
+    }
 
     emit bidPlaced(auctionId, msg.sender, msg.value);
     return true;
@@ -279,9 +248,10 @@ contract BidKaroNa {
   function getAuctionBalance() public view returns(uint256) {
       return address(this).balance;
   }
+
   function getAuctionDetails(uint256 auctionId) public view returns(
     address, address, string memory, uint256, uint256, AuctionStatus
-  ) {
+    ) {
 
     return (
       auctions[auctionId].seller,
