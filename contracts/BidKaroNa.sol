@@ -262,4 +262,24 @@ contract BidKaroNa {
       auctions[auctionId].status
     );
   }
+
+  function getRefundDetails(uint256 auctionId, address bidder) public view returns(
+    bool, uint256
+  ) {
+
+    // Checking if "bidder" is a valid address
+    bool bidderPresent = false;
+    for(uint256 i=0; i<auctions[auctionId].bidderAddresses.length; i++) {
+      if(auctions[auctionId].bidderAddresses[i] == bidder) {
+        bidderPresent = true;
+        break;
+      }
+    }
+    if (bidderPresent) {
+      return (true, auctions[auctionId].refunds[bidder]);
+    }
+    else {
+      return (false, 0);
+    }
+  }
 }
