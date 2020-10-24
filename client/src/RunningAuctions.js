@@ -12,7 +12,6 @@ export default class RunningAuctions extends Component {
     };
   }
 
-
   async componentDidMount() {
     const createAuctionLayout = (auction) => {
         return <AuctionListLayout 

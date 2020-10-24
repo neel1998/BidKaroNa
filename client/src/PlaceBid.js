@@ -10,7 +10,8 @@ export default class PlaceBid extends Component {
   constructor(props) {
     super(props)
     this.state = {
-        auctionDetails: 0
+        auctionDetails: 0,
+        currentBid: 0
     };
   }
 
@@ -24,59 +25,25 @@ export default class PlaceBid extends Component {
     auctionDetails[3] = d.toDateString()
     this.setState({
         auctionDetails: auctionDetails
-    })    
+    })
+    console.log(BidKaroNa.methods)
   }
 
-//   changeActiveStatus = async () => {
-//     const web3 = new Web3(window.ethereum);
-//     let networkId = Object.keys(BidKaroNaContract.networks)[0]
-//     const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
-//     const auctionId = new URLSearchParams(this.props.location.search).get("id");
-//     await window.ethereum.enable();
-//     const accounts = await web3.eth.getAccounts();
-//     const account = accounts[0];
-//     if (this.state.auctionDetails[5] === "0") {
-//         const result = BidKaroNa.methods.cancelAuction(auctionId).send({ from: account });
-//         result.then((val) => {
-//             if ("auctionCreated" in val.events) {
-//               window.alert("Auction created successfully. Your auction Id is : " + val.events.auctionCreated.returnValues.auctionId)
-//               window.location.reload("/runningAuctions")
-//             } else if ("LogFailure" in val.events) {
-//               window.alert("Auction creation failed. " + val.events.LogFailure.returnValues.log)
-//             } else {
-//               window.alert("Something went wrong")
-//             }
-//         }).catch((err) => {
-//             window.alert("Something went wrong")
-//             console.log(err)
-//         })
-//     }
-//     else {
-//         const result = BidKaroNa.methods.activateAuction(auctionId).send({ from: account });
-//         result.then((val) => {
-//             if ("auctionCreated" in val.events) {
-//               window.alert("Auction created successfully. Your auction Id is : " + val.events.auctionCreated.returnValues.auctionId)
-//               window.location.reload("/runningAuctions")
-//             } else if ("LogFailure" in val.events) {
-//               window.alert("Auction creation failed. " + val.events.LogFailure.returnValues.log)
-//             } else {
-//               window.alert("Something went wrong")
-//             }
-//         }).catch((err) => {
-//             window.alert("Something went wrong")
-//             console.log(err)
-//         })
-//     }
-//     this.setState({
-//         auctionDetails: {
-//             ...this.state.auctionDetails,
-//             5: this.state.auctionDetails[5] === "0" ? "1" : "0"
-//         }
-//     })
-//   }
-
-  placeBid = () => {
-
+  placeBid = async () => {
+    const web3 = new Web3(window.ethereum);
+    let networkId = Object.keys(BidKaroNaContract.networks)[0]
+    const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
+    await window.ethereum.enable();
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+    const auctionId = new URLSearchParams(this.props.location.search).get("id");
+    var etherAmount = web3.utils.toBN(12);
+    var weiValue = web3.utils.toWei(etherAmount, 'ether');
+    const result = BidKaroNa.methods.placeBid(auctionId).send({
+        from: account,
+        value: weiValue
+    });
+    console.log(result);
   }
 
   render() {
