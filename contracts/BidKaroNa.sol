@@ -250,7 +250,7 @@ contract BidKaroNa {
   }
 
   function getAuctionDetails(uint256 auctionId) public view returns(
-    address, address, string memory, uint256, uint256, AuctionStatus
+    address, address, string memory, uint256, uint256, bool
     ) {
 
     return (
@@ -259,7 +259,7 @@ contract BidKaroNa {
       auctions[auctionId].title,
       auctions[auctionId].deadline,
       auctions[auctionId].reservePrice,
-      auctions[auctionId].status
+      auctions[auctionId].status == AuctionStatus.Active
     );
   }
 
