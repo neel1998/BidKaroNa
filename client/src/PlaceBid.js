@@ -3,7 +3,8 @@ import Navbar from './Navbar';
 import Web3 from 'web3';
 import theme from './theme'
 import { ThemeProvider } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 const BidKaroNaContract = require("./contracts/BidKaroNa.json")
 
 export default class PlaceBid extends Component {
@@ -11,14 +12,24 @@ export default class PlaceBid extends Component {
     super(props)
     this.state = {
         auctionDetails: 0,
-        currentBid: 0
+        currentBid: 0,
+        bidPrice: ''
     };
+  }
+
+  handleInputChange = (event) => {
+    const { value, name } = event.target;
+    this.setState({
+      [name]: value
+    });
   }
 
   async componentDidMount() {
     const web3 = new Web3(window.ethereum);
     let networkId = Object.keys(BidKaroNaContract.networks)[0]
     const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
     const auctionId = new URLSearchParams(this.props.location.search).get("id")
     const auctionDetails = await BidKaroNa.methods.getAuctionDetails(auctionId).call();
     var d = new Date(auctionDetails[3] * 1000)
@@ -26,7 +37,10 @@ export default class PlaceBid extends Component {
     this.setState({
         auctionDetails: auctionDetails
     })
-    console.log(BidKaroNa.methods)
+    const currentBid = await BidKaroNa.methods.getRefundDetails(auctionId, account).call();
+    this.setState({
+        currentBid: currentBid
+    })
   }
 
   placeBid = async () => {
@@ -37,13 +51,29 @@ export default class PlaceBid extends Component {
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
     const auctionId = new URLSearchParams(this.props.location.search).get("id");
-    var etherAmount = web3.utils.toBN(12);
-    var weiValue = web3.utils.toWei(etherAmount, 'ether');
+    const price = this.state.bidPrice;
+    if (price < 0) {
+        window.alert("Negative Price isn't allowed")
+        return;
+    }
     const result = BidKaroNa.methods.placeBid(auctionId).send({
         from: account,
-        value: weiValue
+        value: price
     });
-    console.log(result);
+    result.then((val) => {
+        if ("bidPlaced" in val.events) {
+            console.log(val);
+            window.alert("Bid placed successfully")
+            window.location.reload()
+        } else if ("LogFailure" in val.events) {
+            window.alert("Bid Placing failed. " + val.events.LogFailure.returnValues.log)
+        } else {
+            window.alert("Something went wrong")
+        }
+    }).catch((err) => {
+        window.alert("Something went wrong")
+        console.log(err)
+    })
   }
 
   render() {
@@ -60,18 +90,24 @@ export default class PlaceBid extends Component {
                     <p>Seller Address: {this.state.auctionDetails[0]}</p>
                     <p>Asset Address: {this.state.auctionDetails[1]}</p>
                     <p>Deadline: {this.state.auctionDetails[3]}</p>
-                    <p>Reserve Price: {this.state.auctionDetails[4]}</p>
-                    {/* <Button 
-                        variant = "contained" 
-                        style = {{'color' : '#FFFFFF', 'background' : '#006064'}} 
-                        onClick = {this.changeActiveStatus}
-                    > {this.state.auctionDetails[5] === "1" ? "Activate" : "Deactivate"}
-                    </Button>
-                    <br />
-                    <br /> */}
+                    <p>Reserve Price: {this.state.auctionDetails[4] + " wei"}</p>
+                    <p>Current Bid: {this.state.currentBid[0] === false ? "Not Placed" : this.state.currentBid[1] + " wei"}</p>
+                    <TextField
+                        variant="outlined"
+                        label = "Bid Amount"
+                        type = "number"
+                        name = "bidPrice"
+                        style = {{"width" : "40%", "margin-right" : "20px"}}
+                        placeholder = {this.state.currentBid[0] === false ? 
+                            "Enter amount of wei you want to bid" :
+                            "Enter additional amount of wei you want to bid"
+                        }
+                        value = {this.state.bidPrice}
+                        onChange = {this.handleInputChange}
+                    />
                     <Button 
                         variant = "contained" 
-                        style = {{'color' : '#FFFFFF', 'background' : '#006064'}} 
+                        style = {{'color' : '#FFFFFF', 'background' : '#006064', "margin-top" : "8px"}} 
                         onClick = {this.placeBid}
                     > Place Bid
                     </Button>
