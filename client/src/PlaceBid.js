@@ -76,6 +76,25 @@ export default class PlaceBid extends Component {
     })
   }
 
+  endAuction = async () => {
+    const web3 = new Web3(window.ethereum);
+    let networkId = Object.keys(BidKaroNaContract.networks)[0]
+    const BidKaroNa = new web3.eth.Contract(BidKaroNaContract.abi, BidKaroNaContract.networks[networkId].address);
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+    const auctionId = new URLSearchParams(this.props.location.search).get("id");
+    const result = await BidKaroNa.methods.endAuction(auctionId).send({ from: account });
+    console.log(result.events);
+    if ("auctionEnded" in result.events) {
+        window.alert("Auction ended successfully")
+        window.location.reload()
+    } else if ("LogFailure" in result.events) {
+        window.alert("End Auction failed. " + result.events.LogFailure.returnValues.log)
+    } else {
+        window.alert("Something went wrong")
+    }
+  }
+
   render() {
     return (
       <ThemeProvider theme = {theme}>
@@ -110,6 +129,14 @@ export default class PlaceBid extends Component {
                         style = {{'color' : '#FFFFFF', 'background' : '#006064', "margin-top" : "8px"}} 
                         onClick = {this.placeBid}
                     > Place Bid
+                    </Button>
+                    <br />
+                    <br />
+                    <Button 
+                        variant = "contained" 
+                        style = {{'color' : '#FFFFFF', 'background' : '#006064', "margin-top" : "8px"}} 
+                        onClick = {this.endAuction}
+                    > End Auction
                     </Button>
                     <br />
                     <br />

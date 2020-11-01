@@ -31,7 +31,7 @@ export default function AuctionListLayout(props) {
       <p><u>Asset Address:</u> {auction[1]}</p>
       <p><u>Reserved Price:</u> {auction[4]}</p>
       <p><u>Deadline:</u> {date.toString()}</p>
-      <p><u>Status:</u> {auction[5] === 0 ? "Active" : "Inactive"}</p>
+      <p><u>Status:</u> {auction[5] === true ? "Active" : "Inactive"}</p>
       <p><Button variant = "contained" style = {{'color' : '#FFFFFF', 'background' : '#006064'}} onClick={placeBid}>View Details</Button></p>
     </div>
   );
