@@ -160,6 +160,8 @@ contract BidKaroNa {
     
     // Process all refunds related to this auction
     uint256 err = 0;
+
+    // All the bidders refund
     for(uint256 i=0; i<auctions[auctionId].bidderAddresses.length; i++) {
       address payable adr = address(uint160(auctions[auctionId].bidderAddresses[i]));
       uint256 refund = auctions[auctionId].refunds[adr];
@@ -172,6 +174,18 @@ contract BidKaroNa {
           emit withdrewRefund(adr, auctionId, refund);
       }
     }
+    // Seller refund
+    address payable adr = address(uint160(auctions[auctionId].seller));
+    uint256 refund = auctions[auctionId].refunds[adr];
+    auctions[auctionId].refunds[adr] = 0;
+    if(!adr.send(refund)){ // Failed refund
+        auctions[auctionId].refunds[adr] = refund;
+        err += 1;
+    }
+    else{ // Successful refund
+        emit withdrewRefund(adr, auctionId, refund);
+    }
+
     if(err > 0){ // At least one refund failed
         return false;
     }
