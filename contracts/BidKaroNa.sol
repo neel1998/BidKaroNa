@@ -118,6 +118,11 @@ contract BidKaroNa {
       return false;
     }
 
+    // Only seller can end the Auction
+    if (auctions[auctionId].seller != msg.sender) {
+      emit LogFailure("Only seller can end the Auction"); 
+      return false;
+    }
     auctions[auctionId].status = AuctionStatus.Inactive;
     Asset assetContract = Asset(auctions[auctionId].assetAddress);
 
