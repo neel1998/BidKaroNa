@@ -47,12 +47,6 @@ This component will allow users to place or change bid for a specific auction.
 
 ![place bid GIF](./static/PlaceBid.gif)
 
-## Team Members
+<hr/>
 
-* Preet Thakkar
-* Vaibhav Garg
-* Anchit Gupta
-* Rizwan Ali
-* Kunal Vaswani
-* Anush Mahajan
-* Neel Trivedi
+![The team](./static/TeamMembers.png)
