@@ -1,5 +1,6 @@
-var SimpleStorage = artifacts.require("./SimpleStorage.sol");
+var Asset = artifacts.require("Asset")
+var BidKaroNa = artifacts.require("BidKaroNa");
 
 module.exports = function(deployer) {
-  deployer.deploy(SimpleStorage);
+  deployer.deploy(BidKaroNa);
 };
