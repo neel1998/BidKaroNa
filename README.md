@@ -57,3 +57,6 @@ This component will allow users to place or change bid for a specific auction.
 <hr/>
 
 ![The team](./static/TeamMembers.png)
+
+## Video and other Documentation
+This is available in the ```Project Docs``` folder.
