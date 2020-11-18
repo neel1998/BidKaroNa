@@ -10,7 +10,14 @@ A full-fledged BlockChain based software web application providing an auctioning
 * Ganache
 * ReactJS
 * Solidity
+* Metamask
 * Ethereum tools
+
+## Setting Up the Dapp on Local Machine
+* To install Truffle, follow [installation instructions](https://www.trufflesuite.com/docs/truffle/getting-started/installation) given on Truffle's documentation site.
+* Download Ganache app from [Truffle Suite](https://www.trufflesuite.com/ganache)
+* Download Metamask wallet as a browser extension. [Here](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn) is the link to chrome extension.
+* You need to import Ganache accounts into Metamask for the transactions. Refer [this](https://medium.com/@kacharlabhargav21/using-ganache-with-remix-and-metamask-446fe5748ccf) blogpost for the same.
 
 ## How To Run
 
