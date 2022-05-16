@@ -119,7 +119,7 @@ export default class CreateNewAuction extends Component {
                   type = "number"
                   name = "reserved_price"
                   style = {{"width" : "60%", "margin":"10px"}}
-                  placeholder = "Enter Reserved Price in Ethers"
+                  placeholder = "Enter Reserved Price in Rupees"
                   value = {this.state.reserved_price}
                   onChange = {this.handleInputChange}
                   required

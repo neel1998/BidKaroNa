@@ -21,11 +21,11 @@ const useStyles = makeStyles((theme) => ({
   },
   titleBar: {
     flexGrow: 1,
-    background: '#006064'
+    background: '#00008B'
   },
   menuBar: {
     flexGrow: 1,
-    background: '#78909C'
+    background: '#0000FF'
   }
 }));
 
@@ -48,16 +48,20 @@ export default function Navbar(props) {
     history.push("/createAsset")
   }
 
+  const createContract = () => {
+    history.push("/createContract")
+  }
+
   const classes = useStyles();
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.titleBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            BidKaroNa
+            D-Kisan
           </Typography>
           <Typography variant="h8" className={classes.subtitle}>
-            A Block-Chain based auction system
+            A farmers friend
           </Typography>
         </Toolbar>
       </AppBar>
@@ -68,6 +72,7 @@ export default function Navbar(props) {
           <Button color="inherit" onClick = {createAuction}>Create New Auction</Button>
           <Button color="inherit" onClick = {runningAuctions}>View Running Auctions</Button>
           <Button color="inherit" onClick = {createAsset}>Create Asset</Button>
+          <Button color="inherit" onClick = {createContract}>Create Contract</Button>
         </Toolbar>
       </AppBar>
 

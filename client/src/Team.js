@@ -21,13 +21,10 @@ export default class Team extends Component {
               history = {this.props.history}/>
             <br/>
             <h2 style = {{'color' : '#006064'}}>The Team </h2>
-            <TeamMember name = {"Preet Thakkar"} email = {"preet.thakkar@students.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601334536deuz6oibxe.png"}/>
-            <TeamMember name = {"Vaibhav Garg"} email = {"vaibhav.garg@students.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601334000juyqtkjgzt.png"}/>
-            <TeamMember name = {"Anchit Gupta"} email = {"anchit.gupta@research.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601321774gxrd7dvg9f.png"}/>
-            <TeamMember name = {"Kunal Vaswani"} email = {"kunal.vaswani@students.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601316264zmyndxmi21.png"}/>
-            <TeamMember name = {"Anush Mahajan"} email = {"anush.mahajan@research.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601318596qfyeqk7mvf.png"}/>
-            <TeamMember name = {"Rizwan Ali"} email = {"rizwan.ali@students.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601320993ivqtu7lbzo.png"}/>
-            <TeamMember name = {"Neel Trivedi"} email = {"neel.trivedi@research.iiit.ac.in"} image = {"https://www.citypng.com/public/uploads/preview/-41601315366ahksehn0fu.png"}/>
+            <TeamMember name = {"Janhavi Kulkarni"} email = {"janhavi1dkulkarni@gmail.com"} image = {"https://www.citypng.com/public/uploads/preview/-41601334536deuz6oibxe.png"}/>
+            <TeamMember name = {"Keshav Sharma"} email = {"mailkeshav298@gmail.com"} image = {"https://www.citypng.com/public/uploads/preview/-41601334000juyqtkjgzt.png"}/>
+            <TeamMember name = {"Arihant Kochar"} email = {"aarihantt@gmail.com"} image = {"https://www.citypng.com/public/uploads/preview/-41601321774gxrd7dvg9f.png"}/>
+            <TeamMember name = {"Mitul Jain"} email = {"meetjain437@gmail.com"} image = {"https://www.citypng.com/public/uploads/preview/-41601316264zmyndxmi21.png"}/>
           </ThemeProvider>
       </div>
     );

@@ -109,8 +109,8 @@ export default class PlaceBid extends Component {
                     <p>Seller Address: {this.state.auctionDetails[0]}</p>
                     <p>Asset Address: {this.state.auctionDetails[1]}</p>
                     <p>Deadline: {this.state.auctionDetails[3]}</p>
-                    <p>Reserve Price: {this.state.auctionDetails[4] + " wei"}</p>
-                    <p>Current Bid: {this.state.currentBid[0] === false ? "Not Placed" : this.state.currentBid[1] + " wei"}</p>
+                    <p>Reserve Price: {"Rs "+ this.state.auctionDetails[4]}</p>
+                    <p>Current Bid: {this.state.currentBid[0] === false ? "Not Placed" : "Rs "+ this.state.currentBid[1]}</p>
                     <TextField
                         variant="outlined"
                         label = "Bid Amount"
@@ -118,8 +118,8 @@ export default class PlaceBid extends Component {
                         name = "bidPrice"
                         style = {{"width" : "40%", "margin-right" : "20px"}}
                         placeholder = {this.state.currentBid[0] === false ? 
-                            "Enter amount of wei you want to bid" :
-                            "Enter additional amount of wei you want to bid"
+                            "Enter amount of rupees you want to bid" :
+                            "Enter additional amount of rupees you want to bid"
                         }
                         value = {this.state.bidPrice}
                         onChange = {this.handleInputChange}

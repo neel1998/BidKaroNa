@@ -1,16 +1,5 @@
-/* 
-Authors:vaibhav.garg
-        anchit.gupta
-        preet.thakkar
-Date: 8th October
 
-The abstract parent contract for assets that
-are eligible to be sold in the auction.
-Every actual asset must be derived from 
-this contract.
-*/
-
-pragma solidity 0.5.16;
+pragma solidity 0.8.12;
 
 contract Asset {
   
