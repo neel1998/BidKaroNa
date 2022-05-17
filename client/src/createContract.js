@@ -8,7 +8,7 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import theme from './theme'
 import './form.css'
 import Web3 from 'web3';
-const BidKaroNaContract = require("./contracts/BidKaroNa.json")
+const econtract = require("./contracts/CreateContract.json")
 
 export default class CreateNewAuction extends Component {
     constructor(props) {
@@ -41,7 +41,7 @@ export default class CreateNewAuction extends Component {
       }
 
       createContract = async () => {
-
+        console.log(econtract);
       }
     
       componentDidMount() {
