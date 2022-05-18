@@ -31,7 +31,7 @@ export default class CreateNewAuction extends Component {
 
   createAuction = async () => {
     const web3 = new Web3(window.ethereum);
-    // console.log(BidKaroNaContract)
+    console.log(BidKaroNaContract)
     const assetAddress = this.state.asset_addr
     const time = Date.parse(this.state.selectedDate)/1000
     const price = this.state.reserved_price
@@ -44,6 +44,7 @@ export default class CreateNewAuction extends Component {
     const account = accounts[0];
     // console.log(accounts)
     if (price >= 0) {
+      console.log("Time:"+time);
         const result = BidKaroNa.methods.createAuction(assetAddress, price, time, title).send({ from: account });
         result.then((val) => {
         if ("auctionCreated" in val.events) {
