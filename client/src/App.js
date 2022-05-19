@@ -5,6 +5,7 @@ import CreateNewAuction from './CreateNewAuction'
 import CreateAsset from './CreateAsset'
 import RunningAuctions from './RunningAuctions'
 import PlaceBid from './PlaceBid'
+import RunningContracts from "./RunningContracts";
 import Team from './Team'
 import createContract from './createContract'
 import "./App.css";
@@ -18,6 +19,7 @@ function App() {
           <Route path="/runningAuctions" component = {RunningAuctions}/>
           <Route path="/placeBid" component = {PlaceBid}/>
           <Route path="/createContract" component = {createContract}/>
+          <Route path="/runningContracts" component = {RunningContracts}/>
           <Route path="/team" component = {Team}/>
           <Route path="/" component = {Home}/>
         </Switch>
