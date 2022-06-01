@@ -9,6 +9,8 @@ import RunningContracts from "./RunningContracts";
 import Team from './Team'
 import createContract from './createContract'
 import "./App.css";
+import Login from "./Login";
+import Signup from "./Signup";
 
 function App() {
   return (
@@ -21,7 +23,9 @@ function App() {
           <Route path="/createContract" component = {createContract}/>
           <Route path="/runningContracts" component = {RunningContracts}/>
           <Route path="/team" component = {Team}/>
-          <Route path="/" component = {Home}/>
+          <Route path="/signup" component = {Signup}/>
+          <Route path="/home" component = {Home}/>
+          <Route exact path="/" component = {Login}/>
         </Switch>
     </div>
   );
