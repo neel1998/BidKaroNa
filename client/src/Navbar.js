@@ -62,10 +62,10 @@ export default function Navbar(props) {
       <AppBar position="static" className={classes.titleBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            D-Kisan
+            D-KISAN
           </Typography>
           <Typography variant="h8" className={classes.subtitle}>
-            A farmers friend
+            Making agriculture a profitable business
           </Typography>
         </Toolbar>
       </AppBar>

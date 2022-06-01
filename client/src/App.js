@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Home from './Home'
 import CreateNewAuction from './CreateNewAuction'
 import CreateAsset from './CreateAsset'

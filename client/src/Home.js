@@ -25,6 +25,7 @@ export default class Home extends Component {
                 <h3>What is D-Kisan?</h3>
                 <p>D-Kisan is a Blockchain based auction and contractual selling and buying platform for farmers and traders</p>
                 <p>This system will allow farmers to conduct online auction in a complete decentralized manner without relying on any central auction service</p>
+                <p>This system will also help farmers in performing contractual farming with the help of our decentralized e-contract feature</p>
               </div>
             </div>
             <div style = {{'position' : 'absolute', 'bottom': '10px', 'width' : '100%'}}>
