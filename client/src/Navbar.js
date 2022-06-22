@@ -1,4 +1,5 @@
 import React from 'react';
+import { getAuth, signOut } from '@firebase/auth';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -32,9 +33,21 @@ const useStyles = makeStyles((theme) => ({
 export default function Navbar(props) {
 
   const history = props.history
+  const auth = getAuth();
+  const user = auth.currentUser;
   const goHome  = () => {
     history.push("/")
   }
+
+  const logout = () => {
+    signOut(auth)
+        .then(() => {
+            localStorage.removeItem('token')
+            history.push("/")
+        })
+        .catch((e) => alert(e.message))
+}
+
 
   const createAuction = () => {
     history.push("/createAuction")
@@ -78,6 +91,8 @@ export default function Navbar(props) {
           <Button color="inherit" onClick = {createAsset}>Create Asset</Button>
           <Button color="inherit" onClick = {createContract}>Create Contract</Button>
           <Button color="inherit" onClick = {runningContracts}>View Contracts</Button>
+          <Button color="inherit" onClick = {logout}>Logout</Button>
+          
         </Toolbar>
       </AppBar>
 
