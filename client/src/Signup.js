@@ -34,7 +34,7 @@ const Signup = ({history}) => {
 
 
     return (
-        <div className="w-full h-screen bg-gradient-to-r from-yellow-200 via-red-500 to-pink-500 flex justify-center items-center">
+        <div className="w-full h-screen bg-gradient-to-r from-blue-100 via-blue-300 to-purple-500 flex justify-center items-center">
             <div className="w-96 bg-white shadow-lg">
                 <div className="m-5">
                     <label className="block text-xl font-bold mb-2">Name</label>
@@ -91,7 +91,7 @@ const Signup = ({history}) => {
                 <div className="m-5">
                     <button
                         onClick={onSignup}
-                        className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-200 text-white px-10 py-2 rounded text-xl font-bold"
+                        className="bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 text-black px-10 py-2 rounded text-xl font-bold"
                     >
                         { loading ? 'Creating user ...' : 'Signup'}
                     </button>

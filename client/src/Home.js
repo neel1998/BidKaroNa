@@ -21,7 +21,7 @@ export default class Home extends Component {
               history = {this.props.history}/>
             <br/>
             <div>
-              <div style = {{'width' : '95%', 'background' : '#f5f5f5', 'margin' : '10px', 'borderRadius' : '20px', 'padding' : '20px', 'textAlign' :'left', 'color' : '#006064'}}>
+              <div  style = {{'width' : '95%', 'background' : '#f5f5f5', 'margin' : '10px', 'borderRadius' : '20px', 'padding' : '20px', 'textAlign' :'left', 'color' : '#006064'}}>
                 <h3>What is D-Kisan?</h3>
                 <p>D-Kisan is a Blockchain based auction and contractual selling and buying platform for farmers and traders</p>
                 <p>This system will allow farmers to conduct online auction in a complete decentralized manner without relying on any central auction service</p>

@@ -22,11 +22,11 @@ const useStyles = makeStyles((theme) => ({
   },
   titleBar: {
     flexGrow: 1,
-    background: '#00008B'
+    background: '#43A6C6'
   },
   menuBar: {
     flexGrow: 1,
-    background: '#0000FF'
+    background: '#67B7D1'
   }
 }));
 
@@ -36,7 +36,7 @@ export default function Navbar(props) {
   const auth = getAuth();
   const user = auth.currentUser;
   const goHome  = () => {
-    history.push("/")
+    history.push("/home")
   }
 
   const logout = () => {
@@ -74,10 +74,10 @@ export default function Navbar(props) {
     <div className={classes.root}>
       <AppBar position="static" className={classes.titleBar}>
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" className={classes.title} style={{color:"black"}}>
             D-KISAN
           </Typography>
-          <Typography variant="h8" className={classes.subtitle}>
+          <Typography variant="h8" className={classes.subtitle} style={{color:"black"}}>
             Making agriculture a profitable business
           </Typography>
         </Toolbar>
@@ -85,13 +85,13 @@ export default function Navbar(props) {
 
       <AppBar position="static" className={classes.menuBar}>
         <Toolbar>
-          <Button color="inherit" onClick = {goHome}>Home</Button>
-          <Button color="inherit" onClick = {createAuction}>Create New Auction</Button>
-          <Button color="inherit" onClick = {runningAuctions}>View Running Auctions</Button>
-          <Button color="inherit" onClick = {createAsset}>Create Asset</Button>
-          <Button color="inherit" onClick = {createContract}>Create Contract</Button>
-          <Button color="inherit" onClick = {runningContracts}>View Contracts</Button>
-          <Button color="inherit" onClick = {logout}>Logout</Button>
+          <Button color="black" onClick = {goHome}>Home</Button>
+          <Button color="black" onClick = {createAuction}>Create New Auction</Button>
+          <Button color="black" onClick = {runningAuctions}>View Running Auctions</Button>
+          <Button color="black" onClick = {createAsset}>Create Asset</Button>
+          <Button color="black" onClick = {createContract}>Create Contract</Button>
+          <Button color="black" onClick = {runningContracts}>View Contracts</Button>
+          <Button color="black" onClick = {logout}>Logout</Button>
           
         </Toolbar>
       </AppBar>

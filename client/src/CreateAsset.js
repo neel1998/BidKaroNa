@@ -6,14 +6,21 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import theme from './theme'
 import './form.css'
 import Web3 from 'web3';
+import { useState } from 'react';
+import { storage } from './firebase';
+import { ref, uploadBytes } from 'firebase/storage';
+import { v4 } from 'uuid';
 const AssetContract = require("./contracts/Asset.json")
 
 export default class CreateAsset extends Component {
+
+  
   constructor(props) {
     super(props)
     this.state = {
-        "description": ""
+      "description": ""
     };
+ 
   }
 
   handleInputChange = (event) => {
@@ -35,57 +42,63 @@ export default class CreateAsset extends Component {
       data: AssetContract.bytecode,
       arguments: [this.state.description]
     })
-    .send({
-      from : account
-    }).then((instance) => {
+      .send({
+        from: account
+      }).then((instance) => {
         console.log("successfully deployed ", instance.options.address)
         alert("New Asset Created successfully. Please copy the following asset address: " + instance.options.address)
-        localStorage.setItem('address' , instance.options.address);
+        localStorage.setItem('address', instance.options.address);
         console.log(add);
         window.location.reload()
-    }).catch((err) => {
+      }).catch((err) => {
         alert("Something went wrong")
         console.log(err)
-    })
+      })
 
-    
+
   }
 
 
   componentDidMount() {
 
   }
+  
+  
+
   render() {
     return (
-      <ThemeProvider theme = {theme}>
+      <ThemeProvider theme={theme}>
         <div>
           <Navbar
-          history = {this.props.history}/>
-          <br/>
-          <div style = {{"textAlign" : "center",'color' : '#006064'}}>
-              <form className="form">
-                <h3>Create New Asset</h3>
-                <TextField
-                  variant="outlined"
-                  label = "Asset Description"
-                  type = "text"
-                  name = "description"
-                  style = {{"width" : "60%", "margin":"10px"}}
-                  placeholder = "Enter Asset Description"
-                  value = {this.state.description}
-                  onChange = {this.handleInputChange}
-                  required
-                />
-                <br/>
-                <br/>
-                <Button variant = "contained" style = {{'color' : '#FFFFFF', 'background' : '#006064'}} onClick = {this.createAsset}>Create Asset</Button>
-                <br/>
-                <br/>
+            history={this.props.history} />
+          <br />
+          <div style={{ "textAlign": "center", 'color': '#006064' }}>
+            <form className="form">
+              <h3>Create New Asset</h3>
+              <TextField
+                variant="outlined"
+                label="Asset Description"
+                type="text"
+                name="description"
+                style={{ "width": "60%", "margin": "10px" }}
+                placeholder="Enter Asset Description"
+                value={this.state.description}
+                onChange={this.handleInputChange}
+                required
+              />
+              <br />
+              <br />
+              <Button variant="contained" style={{ 'color': '#FFFFFF', 'background': '#006064' }} onClick={this.createAsset}>Create Asset</Button>
+              <br />
+              <br />
 
-              </form>
+            </form>
           </div>
         </div>
       </ThemeProvider>
     );
+
+    
   }
+  
 }
