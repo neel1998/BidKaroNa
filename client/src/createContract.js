@@ -12,11 +12,12 @@ const Econtract = require("./contracts/Econtract.json")
 
 export default class CreateNewContract extends Component {
   constructor(props) {
+    const address = localStorage.getItem('address');
     super(props)
     this.state = {
       'name_party1': '',
       'name_party2': '',
-      'asset_addr': '',
+      'asset_addr':address,
       'crop_name': '',
       'Details': '',
       'crop_price': '',

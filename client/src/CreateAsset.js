@@ -25,6 +25,7 @@ export default class CreateAsset extends Component {
 
 
   createAsset = async () => {
+    const add = "";
     const web3 = new Web3(window.ethereum);
     const assetContract = new web3.eth.Contract(AssetContract.abi);
     await window.ethereum.enable();
@@ -39,11 +40,15 @@ export default class CreateAsset extends Component {
     }).then((instance) => {
         console.log("successfully deployed ", instance.options.address)
         alert("New Asset Created successfully. Please copy the following asset address: " + instance.options.address)
+        localStorage.setItem('address' , instance.options.address);
+        console.log(add);
         window.location.reload()
     }).catch((err) => {
         alert("Something went wrong")
         console.log(err)
     })
+
+    
   }
 
 

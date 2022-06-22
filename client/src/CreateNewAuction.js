@@ -13,9 +13,11 @@ const BidKaroNaContract = require("./contracts/BidKaroNa.json")
 export default class CreateNewAuction extends Component {
   constructor(props) {
     super(props)
+    const address = localStorage.getItem('address');
+    console.log(address);
     this.state = {
       'title':'',
-      'asset_addr': '',
+      'asset_addr': address,
       'reserved_price':'',
       'selectedDate': new Date()
     };
