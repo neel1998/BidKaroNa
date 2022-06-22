@@ -1,6 +1,9 @@
 import React,{useEffect, useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { Link } from 'react-router-dom';
+import { onSnapshot, collection, doc, CollectionReference, setDoc } from 'firebase/firestore';
+import db from './firebase'
+import { async } from '@firebase/util';
 
 
 
@@ -13,7 +16,7 @@ const Signup = ({history}) => {
     const [ loading, setLoading ] = useState(false);
 
 
-    const onSignup = () => {
+    const onSignup = async() => {
         setLoading(true);
         const auth = getAuth();
 
@@ -24,9 +27,11 @@ const Signup = ({history}) => {
                     .catch((e) => alert(e.message))
             }).catch((e) => alert(e.message))
             .finally(() => setLoading(false))
-        
-            
+            const docref = doc(db, "users", email);
+            const payload = {name: name, address: address, Type: type};
+            await setDoc(docref, payload);
     }
+
 
     return (
         <div className="w-full h-screen bg-gradient-to-r from-yellow-200 via-red-500 to-pink-500 flex justify-center items-center">
@@ -91,6 +96,7 @@ const Signup = ({history}) => {
                         { loading ? 'Creating user ...' : 'Signup'}
                     </button>
                 </div>
+                
                 <div className="m-5">
                     <Link to="/">
                         Already have an account?

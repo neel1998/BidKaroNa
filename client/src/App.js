@@ -12,20 +12,8 @@ import "./App.css";
 import Login from "./Login";
 import Signup from "./Signup";
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import db from './firebase';
 
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCVtleXF_wMzKyqje5WF1-QrbxIgDE-Ck4",
-  authDomain: "d-kisan.firebaseapp.com",
-  projectId: "d-kisan",
-  storageBucket: "d-kisan.appspot.com",
-  messagingSenderId: "274419079587",
-  appId: "1:274419079587:web:b0b6206a2afc9e7a49a216",
-  measurementId: "G-D4FB1MNXC7"
-};
-
-initializeApp(firebaseConfig);
 
 function App() {
   return (
