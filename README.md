@@ -50,7 +50,7 @@ This component will allow users (bidders and sellers) to view all the ongoing au
 
 ### Place Bids
 
-This component will allow users to place or change bid for a specific auction.
+This component will allow users to place or change bid for a specific auction. The bids thus created will remain blind for a fair auction. 
 
 ![place bid GIF](./static/PlaceBid.gif)
 
