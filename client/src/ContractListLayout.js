@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '20px',
     width: 'inline',
     margin : '10px',
-    height : '360px',
+    height : '220px',
     padding: '10px',
     color: '#455A64',
     textAlign : 'left'

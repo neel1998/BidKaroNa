@@ -13,6 +13,7 @@ import Login from "./Login";
 import Signup from "./Signup";
 import { initializeApp } from "firebase/app";
 import db from './firebase';
+import cropPrice from "./cropPrice";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/team" component = {Team}/>
           <Route path="/signup" component = {Signup}/>
           <Route path="/home" component = {Home}/>
+          <Route path="/cropPrice" component = {cropPrice}/>
           <Route exact path="/" component = {Login}/>
         </Switch>
     </div>

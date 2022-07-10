@@ -57,6 +57,10 @@ export default function Navbar(props) {
     history.push("/runningAuctions")
   }
 
+  const price = () => {
+    history.push("/cropPrice")
+  }
+
   const createAsset = () => {
     history.push("/createAsset")
   }
@@ -91,6 +95,7 @@ export default function Navbar(props) {
           <Button color="black" onClick = {createAsset}>Create Asset</Button>
           <Button color="black" onClick = {createContract}>Create Contract</Button>
           <Button color="black" onClick = {runningContracts}>View Contracts</Button>
+          <Button color="black" onClick = {price}>Crop price</Button>       
           <Button color="black" onClick = {logout}>Logout</Button>
           
         </Toolbar>
